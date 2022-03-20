@@ -1,0 +1,9 @@
+name: HungerShop
+main: com.gmail.creepycucumber1.hungershop.HungerShop
+version: 1.0-SNAPSHOT
+api-version: 1.17
+author: longbread
+depend: [Vault]
+commands:
+  hungershop:
+    description: Configure shop prices
