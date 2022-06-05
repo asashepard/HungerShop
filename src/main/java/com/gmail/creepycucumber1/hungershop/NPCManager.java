@@ -15,6 +15,7 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +32,13 @@ public class NPCManager {
     public void createNPC() {
         DedicatedServer dedicatedServer = ((CraftServer) Bukkit.getServer()).getServer();
         WorldServer world = ((CraftWorld)HungerShop.overworld).getHandle();
-        GameProfile gameProfile = new GameProfile(randomUUID, "shopkeeper");
+        GameProfile gameProfile = new GameProfile(randomUUID, "Shopkeeper");
         ChangeSkin(gameProfile);
         EntityPlayer npc = new EntityPlayer(dedicatedServer, world, gameProfile);
         npc.a(plugin.getConfig().getInt("x") + .5, plugin.getConfig().getInt("y") + .0, plugin.getConfig().getInt("z") + .5, 90.0F, 0.0F);
         new PlayerConnection(dedicatedServer, new NetworkManager(EnumProtocolDirection.a), npc);
         world.a(npc);
-        addNPCPacket(npc);
+        addNPCPacket(npc, plugin);
         NPC.add(npc);
     }
 
@@ -47,19 +48,20 @@ public class NPCManager {
         profile.getProperties().put("textures", new Property("textures", texture, signature));
     }
 
-    public static void addNPCPacket(EntityPlayer npc) {
+    public static void addNPCPacket(EntityPlayer npc, Plugin plugin) {
         NPCManager nPCManager = new NPCManager();
         for (Player player : Bukkit.getOnlinePlayers()) {
             PlayerConnection connection = (((CraftPlayer)player).getHandle()).b;
             connection.a(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.a, npc));
             connection.a(new PacketPlayOutNamedEntitySpawn(npc));
-            connection.a(new PacketPlayOutEntityHeadRotation(npc, (byte) ((90.0F * 256.0F) / 360.0F)));
+            float rotation = (float) plugin.getConfig().getInt("rotation");
+            connection.a(new PacketPlayOutEntityHeadRotation(npc, (byte) ((rotation * 256.0F) / 360.0F)));
             for(int w = 1; w < 20; w++) { //repeatedly sends head rotation packet to client, makes sure head rotates
                 Bukkit.getScheduler().runTaskLater(nPCManager.plugin, new Runnable() {
                     @Override
                     public void run() {
-                        connection.a(new PacketPlayOutEntityHeadRotation(npc, (byte) ((90.0F * 256.0F) / 360.0F)));
-                        connection.a(new PacketPlayOutEntity.PacketPlayOutEntityLook(0, (byte) ((90.0F * 256.0F) / 360.0F), (byte) ((0.0F * 256.0F) / 360.0F), true));
+                        connection.a(new PacketPlayOutEntityHeadRotation(npc, (byte) ((rotation * 256.0F) / 360.0F)));
+                        connection.a(new PacketPlayOutEntity.PacketPlayOutEntityLook(0, (byte) ((rotation * 256.0F) / 360.0F), (byte) 0, true));
                     }
                 }, w);
             }
@@ -67,19 +69,20 @@ public class NPCManager {
         }
     }
 
-    public static void addJoinPacket(Player player) {
+    public static void addJoinPacket(Player player, Plugin plugin) {
         NPCManager nPCManager = new NPCManager();
         for (EntityPlayer npc : NPC) {
             PlayerConnection connection = (((CraftPlayer)player).getHandle()).b;
             connection.a(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.a, npc));
             connection.a(new PacketPlayOutNamedEntitySpawn(npc));
-            connection.a(new PacketPlayOutEntityHeadRotation(npc, (byte) ((90.0F * 256.0F) / 360.0F)));
+            float rotation = (float) plugin.getConfig().getInt("rotation");
+            connection.a(new PacketPlayOutEntityHeadRotation(npc, (byte) ((rotation * 256.0F) / 360.0F)));
             for(int w = 1; w < 20; w++) { //repeatedly sends head rotation packet to client, makes sure head rotates
                 Bukkit.getScheduler().runTaskLater(nPCManager.plugin, new Runnable() {
                     @Override
                     public void run() {
-                        connection.a(new PacketPlayOutEntityHeadRotation(npc, (byte) ((90.0F * 256.0F) / 360.0F)));
-                        connection.a(new PacketPlayOutEntity.PacketPlayOutEntityLook(0, (byte) ((90.0F * 256.0F) / 360.0F), (byte) ((0.0F * 256.0F) / 360.0F), true));
+                        connection.a(new PacketPlayOutEntityHeadRotation(npc, (byte) ((rotation * 256.0F) / 360.0F)));
+                        connection.a(new PacketPlayOutEntity.PacketPlayOutEntityLook(0, (byte) ((rotation * 256.0F) / 360.0F), (byte) 0, true));
                     }
                 }, w);
             }

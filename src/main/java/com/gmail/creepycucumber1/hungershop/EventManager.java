@@ -36,7 +36,7 @@ public class EventManager implements Listener {
         Player p = e.getPlayer();
 
         if (!NPCManager.getNPCs().isEmpty()) {
-            NPCManager.addJoinPacket(p);
+            NPCManager.addJoinPacket(p, plugin);
         }
 
         ZoneId z = ZoneId.of("America/Chicago");
@@ -133,7 +133,8 @@ public class EventManager implements Listener {
                 e.setCancelled(true);
 
                 if(!p.getInventory().contains(e.getCurrentItem().getType())) {
-                    p.sendMessage(ChatColor.RED + "You do not have any of these items to sell!");
+                    p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6&lShopkeeper &8» " +
+                            "&cYou don't have any of those items to sell!"));
                     p.closeInventory();
                     e.setCancelled(true);
                     return;
@@ -170,7 +171,8 @@ public class EventManager implements Listener {
                         }
                     }
                 }
-                p.sendMessage(ChatColor.GREEN + ("You sold " + decimalFormatItem.format(amount) + "x [" + e.getCurrentItem().getType() + "] to the Admin Shop for $" + decimalFormat.format(amount * price) + "!"));
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6&lShopkeeper &8» " +
+                        "&aYou sold " + decimalFormatItem.format(amount) + "x &7&o" + e.getCurrentItem().getType() + "&r&7 to the Admin Shop for &a$" + decimalFormat.format(amount * price) + "&7!"));
 
                 HungerShop.vault.depositPlayer(p, price * amount);
 

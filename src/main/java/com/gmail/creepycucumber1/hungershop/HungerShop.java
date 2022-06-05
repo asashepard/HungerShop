@@ -65,6 +65,7 @@ public class HungerShop extends JavaPlugin {
         this.config.addDefault("x", 202);
         this.config.addDefault("y", 66);
         this.config.addDefault("z", 118);
+        this.config.addDefault("rotation", 180);
         this.config.options().copyDefaults(true);
         saveConfig();
         Data.setup();
@@ -109,7 +110,7 @@ public class HungerShop extends JavaPlugin {
                             map2.get(p.getUniqueId()).equals(overworld)) {
                         Location oldloc = map.get(p.getUniqueId());
                         if(oldloc.distance(npcloc) > loc.distance(npcloc) && loc.distance(npcloc) < 50 && oldloc.distance(npcloc) > 50) { //getting closer to npc in overworld, within 100 blocks
-                            NPCManager.addJoinPacket(p);
+                            NPCManager.addJoinPacket(p, plugin);
                         }
                     }
 
@@ -119,7 +120,7 @@ public class HungerShop extends JavaPlugin {
                     if(map2.containsKey(p.getUniqueId())) {
                         World oldwld = map2.get(p.getUniqueId());
                         if(!oldwld.equals(overworld) && wld.equals(overworld)) { //going from end or nether to overworld
-                            NPCManager.addJoinPacket(p);
+                            NPCManager.addJoinPacket(p, plugin);
                         }
                     }
 
